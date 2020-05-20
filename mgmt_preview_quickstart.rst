@@ -126,7 +126,7 @@ calls. Let's create a resource group and demonstrate management client's usage
 ::
 
     # 
-    group_list = self.resource_client.resource_groups.list()
+    group_list = resource_client.resource_groups.list()
     for g in group_list:
         print_resource_group(g)
 
