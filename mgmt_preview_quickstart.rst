@@ -135,4 +135,4 @@ calls. Let's create a resource group and demonstrate management client's usage
 ::
 
     delete_async_op = resource_client.resource_groups.begin_delete(group_name)
-    delete_async_op.wd 
+    delete_async_op.wait()
