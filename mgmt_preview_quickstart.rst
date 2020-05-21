@@ -128,7 +128,7 @@ calls. Let's demonstrate management client's usage by showing concrete examples
 Managing Resource Groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can use the Resource client (`azure.mgmt.resource.ResourceManagementClient`) we have created to perform operations on Resource Group
+We can use the Resource client (``azure.mgmt.resource.ResourceManagementClient``) we have created to perform operations on Resource Group. In this example, we will show to manage Resource Groups.
 
 **Create a resource group**
 
@@ -170,7 +170,7 @@ We can use the Resource client (`azure.mgmt.resource.ResourceManagementClient`) 
 Managing Network Resources
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can use the Network client (`azure.mgmt.resource.ResourceManagementClient`) we have created to perform operations on Network related resources
+We can use the Network client (``azure.mgmt.resource.NetworkManagementClient``) we have created to perform operations on Network related resources. In this example, we will show how to manage Public IP Addresses.
 
 **Create a Network Public IP Address**
 ::
