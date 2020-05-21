@@ -28,16 +28,34 @@ These values can be obtained from the portal, here's the instructions:
 Get Subscription ID
 ^^^^^^^^^^^^^^^^^^^
 
-1. Login into your Azure account
+1. Login into your Azure account (https://portal.azure.com/)
 2. Select Subscriptions in the left sidebar
 3. Select whichever subscription is needed
 4. Click on Overview
 5. Copy the Subscription ID
 
-Get Client ID / Client Secret / Tenant ID 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Get Client ID / Tenant ID
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For information on how to get Client ID, Client Secret, and Tenant ID, please refer to `this document <https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal>`__
+1. Login into your Azure account (https://portal.azure.com/)
+2. Select "Azure Active Directory" in the left sidebar
+3. Click "App Registrations" in the left sidebar
+4. Create a new application or select the application which you have created
+5. Copy "Application (Client) ID" and "Directory (Tenant) ID"
+
+Get Client Secret
+^^^^^^^^^^^^^^^^^
+1. Login into your Azure account (https://portal.azure.com/)
+2. Select "Azure Active Directory" in the left sidebar
+3. Click "App Registrations" in the left sidebar
+4. Create a new application or select the application which you have created
+5. Click "Certificates & Secrets"
+6. Click "+ New client secret"
+7. Type description and click "Add"
+8. Copy and store the key value. You won’t be able to retrieve it after
+   you leave this page.
+   
+If you are interested in detailed information on Azure Active Directory, please refer to `this document <https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal>`__
 
 Setting Environment Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,6 +85,11 @@ Linux-based OS
     export AZURE_CLIENT_SECRET="__CLIENT_SECRET__"
     export AZURE_TENANT_ID="__TENANT_ID__"
     export AZURE_SUBSCRIPTION_ID="__SUBSCRIPTION_ID__"
+    
+Add Role Assignment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In order to access resources in a subscription, you must assign a role to the application. Please `follow the instructions here 
+<https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#assign-a-role-to-the-application>`__ to add the role assignment
 
 Authentication and Creating Resource Management Client
 ------------------------------------------------------
@@ -81,23 +104,24 @@ a management client, simply do the following:
 
 ::
 
+    # Import the target service 
     import azure.mgmt.resource
-    import azure.mgmt.network
-    import azure.mgmt.compute
-    from azure.identity import DefaultAzureCredential;
+    from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
-    credentials = DefaultAzureCredential()
-    resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credentials, subscription_id=subscription_id)
+    credential = DefaultAzureCredential()
+    
+    # Create a management client for this service
+    resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
 
 More information and different authentication approaches using Azure Identity can be found in
-`this document <https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python>`__
+`this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
 
-Managing Resources
+Interacting with Azure Resources
 ------------------
 
 Now that we are authenticated, we can use our management client to make API
-calls. Let's create a resource group and demonstrate management client's usage
+calls. Let's create a resource group and demonstrate management client's usage. 
 
 **Create a resource group**
 
@@ -125,8 +149,7 @@ calls. Let's create a resource group and demonstrate management client's usage
 
 ::
 
-    # 
-    group_list = resource_client.resource_groups.list()
+    group_list = self.resource_client.resource_groups.list()
     for g in group_list:
         print_resource_group(g)
 
@@ -136,3 +159,18 @@ calls. Let's create a resource group and demonstrate management client's usage
 
     delete_async_op = resource_client.resource_groups.begin_delete(group_name)
     delete_async_op.wait()
+
+Need help?
+----------
+- File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__ and make sure you add the "Preview" label to the issue
+- Check `previous questions <https://stackoverflow.com/questions/tagged/azure+python>`__ or ask new ones on StackOverflow using azure and python tags.
+
+Contributing
+------------
+For details on contributing to this repository, see the contributing guide.
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
+
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
