@@ -97,15 +97,16 @@ Authentication and Creating Resource Management Client
 Now that the environment is setup, all you need to do is to create an
 authenticated client. Our default option is to use
 **DefaultAzureCredential** and in this guide we have picked
-**Resources** as our target service, but you can set it up similarly for any other service that you are using.
+**Resources** and **Netowrk** as our target services, but you can set it up similarly for any other service that you are using. To view all the services that are supported by the SDK, please refer to the `API references <https://docs.microsoft.com/python/api/?view=azure-python>`__
 
 To authenticate to Azure and create
 a management client, simply do the following:
 
 ::
 
-    # Import the target service 
+    # Import the target services 
     import azure.mgmt.resource
+    import azure.mgmt.network
     from azure.identity import DefaultAzureCredential
     ...
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
@@ -113,37 +114,43 @@ a management client, simply do the following:
     
     # Create a management client for this service
     resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
+    network_client = azure.mgmt.resource.NetworkManagementClient(credential=credential, subscription_id=subscription_id)
 
 More information and different authentication approaches using Azure Identity can be found in
 `this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
 
 Interacting with Azure Resources
-------------------
+--------------------------------
 
 Now that we are authenticated, we can use our management client to make API
-calls. Let's create a resource group and demonstrate management client's usage. 
+calls. Let's demonstrate management client's usage by showing concrete examples 
+
+Managing Resource Groups
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We can use the Resource client (`azure.mgmt.resource.ResourceManagementClient`) we have created to perform operations on Resource Group
 
 **Create a resource group**
 
 ::
 
-    location = "uswest2"
-    group_name = "my_resource_group_name"
+    LOCATION = "eastus"
+    GROUP_NAME = "my_resource_group_name"
     group = resource_client.resource_groups.create_or_update(
-        group_name,
-        {'location': location}
+        GROUP_NAME,
+        {'location': LOCATION}
     )
 
 **Update a resource group**
 
 ::
 
-    group_name = "my_resource_group_name"
+    GROUP_NAME = "my_resource_group_name"
     group.tags = {
         "environment":"test",
         "department":"tech"
     }
-    updated_group = resource_client.resource_groups.create_or_update(group_name, group)
+    updated_group = resource_client.resource_groups.create_or_update(GROUP_NAME, group)
 
 **List all resource groups**
 
@@ -157,8 +164,66 @@ calls. Let's create a resource group and demonstrate management client's usage.
 
 ::
 
-    delete_async_op = resource_client.resource_groups.begin_delete(group_name)
+    delete_async_op = resource_client.resource_groups.begin_delete(GROUP_NAME)
     delete_async_op.wait()
+    
+Managing Network Resources
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We can use the Network client (`azure.mgmt.resource.ResourceManagementClient`) we have created to perform operations on Network related resources
+
+**Create a Network Public IP Address**
+::
+    GROUP_NAME = "testgroup"
+    PUBLIC_IP_ADDRESS = "public_ip_address_name"
+ 
+    # Create Resource Group
+    resource_client.resource_groups.create_or_update(
+        GROUP_NAME,
+        {"location": "eastus"}
+    )
+
+    # Create Public IP Address
+    public_ip_address = network_client.public_ip_addresses.begin_create_or_update(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS,
+        {
+          "location": "eastus"
+        }
+    ).result()
+    print("Create Public IP Address:\n{}".format(public_ip_address))
+
+**Get Public IP Address**
+::
+    public_ip_address = network_client.public_ip_addresses.get(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS
+    )
+    print("Get Public IP Address:\n{}".format(public_ip_address))
+
+**Update Public IP Address**
+::
+    # Update Public IP Address
+    public_ip_address = network_client.public_ip_addresses.update_tags(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS,
+        {
+          "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+          }
+        }
+    )
+    print("Updated Public IP Address \n{}".format(public_ip_address))
+
+**Delete Public IP Address**
+::
+    # Delete Public IP Address
+    public_ip_address = network_client.public_ip_addresses.begin_delete(
+        GROUP_NAME,
+        PUBLIC_IP_ADDRESS
+    ).result()
+    print("Delete Public IP Address.\n")
 
 Need help?
 ----------
