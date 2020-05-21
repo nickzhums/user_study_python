@@ -127,7 +127,7 @@ calls. Let's create a resource group and demonstrate management client's usage.
 
 ::
 
-    location = "mylocation"
+    location = "uswest2"
     group_name = "my_resource_group_name"
     group = resource_client.resource_groups.create_or_update(
         group_name,
@@ -151,7 +151,7 @@ calls. Let's create a resource group and demonstrate management client's usage.
 
     group_list = self.resource_client.resource_groups.list()
     for g in group_list:
-        print_resource_group(g)
+        print(g.name)
 
 **Delete a resource group**
 
