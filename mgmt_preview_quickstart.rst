@@ -114,7 +114,7 @@ a management client, simply do the following:
     
     # Create a management client for this service
     resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
-    network_client = azure.mgmt.resource.NetworkManagementClient(credential=credential, subscription_id=subscription_id)
+    network_client = azure.mgmt.network.NetworkManagementClient(credential=credential, subscription_id=subscription_id)
 
 More information and different authentication approaches using Azure Identity can be found in
 `this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
